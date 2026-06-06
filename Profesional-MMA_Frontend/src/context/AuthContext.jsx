@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
 
   const isAdmin = Boolean(
     user &&
-      ["super_admin", "promoter_admin", "gym_admin"].includes(user.role)
+    ["super_admin", "promoter_admin", "gym_admin"].includes(user.role)
   );
 
   const isPremium = Boolean(user?.is_premium);
@@ -105,13 +105,13 @@ export function AuthProvider({ children }) {
   }
 
   async function refreshUser() {
-  const response = await api.get("/me");
+    const response = await api.get("/profile");
 
-  setUser(response.data);
-  localStorage.setItem("user", JSON.stringify(response.data));
+    setUser(response.data);
+    localStorage.setItem("user", JSON.stringify(response.data));
 
-  return response.data;
-}
+    return response.data;
+  }
 
   const value = {
     user,

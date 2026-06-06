@@ -32,6 +32,7 @@ import AdminUsersPage from "../pages/admin/AdminUsersPage";
 import AdminUserFormPage from "../pages/admin/AdminUserFormPage";
 import AdminRulesPage from "../pages/admin/AdminRulesPage";
 import AdminRuleFormPage from "../pages/admin/AdminRuleFormPage";
+import PaymentResultPage from "../pages/public/PaymentResultPage";
 
 function AppRouter() {
   return (
@@ -58,6 +59,8 @@ function AppRouter() {
           <Route path="/favorites" element={<FavoritesPage />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/premium" element={<PremiumPage />} />
+          <Route path="/payment/success" element={<PaymentResultPage />} />
+          <Route path="/payment/cancelled" element={<PaymentResultPage />} />
         </Route>
       </Route>
 
