@@ -1,21 +1,38 @@
-import { Crown, LogOut, Menu, Shield, User } from "lucide-react";
+import { Crown, LogOut, Menu, Shield, User, LoaderCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function PublicHeader() {
   const { user, isAuthenticated, isAdmin, isPremium, logout } = useAuth();
 
+  const navigate = useNavigate();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    setLoggingOut(true);
+
+
+    try {
+      await logout();
+      navigate("/login");
+    } finally {
+      setLoggingOut(false);
+    };
+  }
+
+
 
   return (
-    
+
     <header id="publicHeader" className="grid grid-cols-[5%_90%_5%] border-b border-slate-800 bg-slate-900">
       <div id="leftSpacer" />
       <div className="flex h-16 items-center justify-between pl-8 pr-8">
-        
+
         <Link to="/" className="flex items-center gap-3">
           <img src="/icono-guantilla.png" className="h-10 w-10" />
           <span className="font-bold text-blue-500">Professional MMA</span>
@@ -67,11 +84,16 @@ function PublicHeader() {
               </Link>
 
               <button
-                onClick={logout}
-                className="rounded-lg p-2 hover:bg-slate-800"
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="rounded-lg p-2 hover:bg-slate-800 disabled:opacity-50"
                 title="Cerrar sesión"
               >
-                <LogOut size={20} />
+                {loggingOut ? (
+                  <LoaderCircle size={20} className="animate-spin" />
+                ) : (
+                  <LogOut size={20} />
+                )}
               </button>
             </>
           ) : (
