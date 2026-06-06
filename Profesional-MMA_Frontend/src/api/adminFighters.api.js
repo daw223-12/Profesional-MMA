@@ -19,3 +19,7 @@ export function updateAdminFighter(id, data) {
 export function deleteAdminFighter(id) {
   return api.delete(`/admin/fighters/${id}`);
 }
+
+export function attachGymToFighter(fighterId, data) {
+  return api.post(`/admin/fighters/${fighterId}/gyms`, data);
+}

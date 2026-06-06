@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  attachGymToFighter,
   createAdminFighter,
   getAdminFighter,
   updateAdminFighter,
 } from "../../api/adminFighters.api";
+import { getAdminGyms } from "../../api/adminGyms.api";
+import { useAuth } from "../../hooks/useAuth";
 
 function AdminFighterFormPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const isEditing = Boolean(id);
+  const { user } = useAuth();
 
-  const [loading, setLoading] = useState(isEditing);
+  const isEditing = Boolean(id);
+  const isGymAdmin = user?.role === "gym_admin";
+
+  const [gyms, setGyms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,34 +33,69 @@ function AdminFighterFormPage() {
     photo_url: "",
   });
 
+  const [gymRelation, setGymRelation] = useState({
+    gym_id: "",
+    start_date: "",
+    end_date: "",
+  });
+
   useEffect(() => {
     let ignore = false;
 
-    async function loadFighter() {
-      if (!isEditing) return;
-
+    async function loadData() {
       setLoading(true);
       setError("");
 
       try {
-        const response = await getAdminFighter(id);
-        const fighter = response.data;
+        const gymsResponse = await getAdminGyms();
 
         if (!ignore) {
-          setForm({
-            name: fighter.name || "",
-            nickname: fighter.nickname || "",
-            wins: fighter.wins ?? 0,
-            losses: fighter.losses ?? 0,
-            draws: fighter.draws ?? 0,
-            height: fighter.height || "",
-            reach: fighter.reach || "",
-            photo_url: fighter.photo_url || "",
-          });
+          const allGyms = gymsResponse.data.data || [];
+
+          const visibleGyms = isGymAdmin
+            ? allGyms.filter((gym) => Number(gym.id) === Number(user?.gym_id))
+            : allGyms;
+
+          setGyms(visibleGyms);
+
+          if (isGymAdmin && user?.gym_id) {
+            setGymRelation((current) => ({
+              ...current,
+              gym_id: String(user.gym_id),
+            }));
+          }
+        }
+
+        if (isEditing) {
+          const response = await getAdminFighter(id);
+          const fighter = response.data;
+
+          if (!ignore) {
+            setForm({
+              name: fighter.name || "",
+              nickname: fighter.nickname || "",
+              wins: fighter.wins ?? 0,
+              losses: fighter.losses ?? 0,
+              draws: fighter.draws ?? 0,
+              height: fighter.height || "",
+              reach: fighter.reach || "",
+              photo_url: fighter.photo_url || "",
+            });
+
+            const firstGym = fighter.gyms?.[0];
+
+            if (firstGym) {
+              setGymRelation({
+                gym_id: String(firstGym.id),
+                start_date: firstGym.pivot?.start_date || "",
+                end_date: firstGym.pivot?.end_date || "",
+              });
+            }
+          }
         }
       } catch {
         if (!ignore) {
-          setError("No se pudo cargar el peleador.");
+          setError("No se pudieron cargar los datos del formulario.");
         }
       } finally {
         if (!ignore) {
@@ -62,16 +104,23 @@ function AdminFighterFormPage() {
       }
     }
 
-    loadFighter();
+    loadData();
 
     return () => {
       ignore = true;
     };
-  }, [id, isEditing]);
+  }, [id, isEditing, isGymAdmin, user?.gym_id]);
 
   function handleChange(event) {
     setForm({
       ...form,
+      [event.target.name]: event.target.value,
+    });
+  }
+
+  function handleGymRelationChange(event) {
+    setGymRelation({
+      ...gymRelation,
       [event.target.name]: event.target.value,
     });
   }
@@ -93,10 +142,22 @@ function AdminFighterFormPage() {
         photo_url: form.photo_url || null,
       };
 
+      let savedFighter;
+
       if (isEditing) {
-        await updateAdminFighter(id, payload);
+        const response = await updateAdminFighter(id, payload);
+        savedFighter = response.data;
       } else {
-        await createAdminFighter(payload);
+        const response = await createAdminFighter(payload);
+        savedFighter = response.data;
+      }
+
+      if (!isGymAdmin && gymRelation.gym_id && gymRelation.start_date) {
+        await attachGymToFighter(savedFighter.id, {
+          gym_id: Number(gymRelation.gym_id),
+          start_date: gymRelation.start_date,
+          end_date: gymRelation.end_date || null,
+        });
       }
 
       navigate("/admin/fighters");
@@ -133,131 +194,208 @@ function AdminFighterFormPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 rounded-2xl border border-slate-800 bg-slate-900 p-6"
+        className="space-y-6 rounded-2xl border border-slate-800 bg-slate-900 p-6"
       >
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm text-slate-300">
-              Nombre
-            </label>
+        <section className="space-y-5">
+          <h2 className="text-xl font-bold">Datos del peleador</h2>
 
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-              required
-            />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Nombre
+              </label>
+
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">Mote</label>
+
+              <input
+                name="nickname"
+                value={form.nickname}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Victorias
+              </label>
+
+              <input
+                type="number"
+                name="wins"
+                value={form.wins}
+                onChange={handleChange}
+                min="0"
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Derrotas
+              </label>
+
+              <input
+                type="number"
+                name="losses"
+                value={form.losses}
+                onChange={handleChange}
+                min="0"
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Empates
+              </label>
+
+              <input
+                type="number"
+                name="draws"
+                value={form.draws}
+                onChange={handleChange}
+                min="0"
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Altura (cm)
+              </label>
+
+              <input
+                type="number"
+                name="height"
+                value={form.height}
+                onChange={handleChange}
+                min="100"
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Envergadura (cm)
+              </label>
+
+              <input
+                type="number"
+                name="reach"
+                value={form.reach}
+                onChange={handleChange}
+                min="100"
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
 
           <div>
             <label className="mb-1 block text-sm text-slate-300">
-              Mote
+              URL fotografía
             </label>
 
             <input
-              name="nickname"
-              value={form.nickname}
+              name="photo_url"
+              value={form.photo_url}
               onChange={handleChange}
+              placeholder="https://..."
               className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
             />
           </div>
-        </div>
+        </section>
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <section className="space-y-5 border-t border-slate-800 pt-6">
           <div>
-            <label className="mb-1 block text-sm text-slate-300">
-              Victorias
-            </label>
+            <h2 className="text-xl font-bold">Gimnasio</h2>
 
-            <input
-              type="number"
-              name="wins"
-              value={form.wins}
-              onChange={handleChange}
-              min="0"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-            />
+            {isGymAdmin && (
+              <p className="mt-1 text-sm text-slate-400">
+                Como administrador de gimnasio, solo puedes usar tu propio
+                gimnasio.
+              </p>
+            )}
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-slate-300">
-              Derrotas
-            </label>
+          <div className="grid gap-4 md:grid-cols-3">
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Gimnasio
+              </label>
 
-            <input
-              type="number"
-              name="losses"
-              value={form.losses}
-              onChange={handleChange}
-              min="0"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-            />
+              <select
+                name="gym_id"
+                value={gymRelation.gym_id}
+                onChange={handleGymRelationChange}
+                disabled={isGymAdmin}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500 disabled:opacity-60"
+              >
+                <option value="">Seleccionar gimnasio</option>
+
+                {gyms.map((gym) => (
+                  <option key={gym.id} value={gym.id}>
+                    {gym.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Fecha inicio
+              </label>
+
+              <input
+                type="date"
+                name="start_date"
+                value={gymRelation.start_date}
+                onChange={handleGymRelationChange}
+                required={!isGymAdmin && Boolean(gymRelation.gym_id)}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
+
+            <div>
+              <label className="mb-1 block text-sm text-slate-300">
+                Fecha fin
+              </label>
+
+              <input
+                type="date"
+                name="end_date"
+                value={gymRelation.end_date}
+                onChange={handleGymRelationChange}
+                className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="mb-1 block text-sm text-slate-300">
-              Empates
-            </label>
+          {isGymAdmin && (
+            <div className="rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm text-yellow-300">
+              Nota: el backend actual asigna automáticamente el gimnasio del
+              gym_admin al crear el peleador. Si necesitas guardar fechas
+              personalizadas para gym_admin, habría que permitirlo también en
+              Laravel.
+            </div>
+          )}
+        </section>
 
-            <input
-              type="number"
-              name="draws"
-              value={form.draws}
-              onChange={handleChange}
-              min="0"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <label className="mb-1 block text-sm text-slate-300">
-              Altura (cm)
-            </label>
-
-            <input
-              type="number"
-              name="height"
-              value={form.height}
-              onChange={handleChange}
-              min="100"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="mb-1 block text-sm text-slate-300">
-              Envergadura (cm)
-            </label>
-
-            <input
-              type="number"
-              name="reach"
-              value={form.reach}
-              onChange={handleChange}
-              min="100"
-              className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="mb-1 block text-sm text-slate-300">
-            URL fotografía
-          </label>
-
-          <input
-            name="photo_url"
-            value={form.photo_url}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
-          />
-        </div>
-
-        <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <div className="flex flex-col gap-3 border-t border-slate-800 pt-6 sm:flex-row sm:justify-end">
           <button
             type="button"
             onClick={() => navigate("/admin/fighters")}
