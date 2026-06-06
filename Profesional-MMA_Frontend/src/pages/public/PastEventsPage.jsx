@@ -54,6 +54,9 @@ function PastEventsPage() {
       className="min-h-screen flex justify-center pt-10"
     >
       <div id="profilePageContent" className="mt-8 w-full max-w-7xl space-y-10">
+
+        <div id="spacer" className="h-4"></div>
+        
         <section className="mb-8 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 p-6 md:p-10">
           <p className="mb-3 text-sm font-semibold uppercase text-blue-400">
             Área premium
@@ -68,12 +71,16 @@ function PastEventsPage() {
           </p>
         </section>
 
+        <div id="spacer" className="h-2"></div>
+
         <EventFilters
           search={search}
           setSearch={setSearch}
           location={location}
           setLocation={setLocation}
         />
+
+        <div id="spacer" className="h-2"></div>
 
         {loading && (
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">

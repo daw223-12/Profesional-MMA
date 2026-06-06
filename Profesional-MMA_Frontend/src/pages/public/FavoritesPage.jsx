@@ -46,6 +46,9 @@ function FavoritesPage() {
       className="flex min-h-screen justify-center pt-10"
     >
       <div id="profilePageContent" className="mt-8 w-full max-w-7xl space-y-10">
+
+        <div id="spacer" className="h-2"></div>
+
         <section className="rounded-3xl border border-slate-800 bg-slate-900 p-6 md:p-8">
           <p className="text-sm uppercase text-blue-400">Área premium</p>
           <h1 className="mt-2 text-4xl font-black">Mis favoritos</h1>
@@ -53,6 +56,8 @@ function FavoritesPage() {
             Consulta los eventos que has guardado para seguirlos fácilmente.
           </p>
         </section>
+
+        <div id="spacer" className="h-2"></div>
 
         {loading && (
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">

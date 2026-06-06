@@ -65,23 +65,28 @@ function HomePage() {
   return (
     <div
       id="homePageContainer"
-      className="flex min-h-screen justify-center pt-10"
+      className="flex min-h-screen justify-center"
     >
       <div id="profilePageContent" className="mt-8 w-full max-w-7xl space-y-10">
-        <section className="mb-8 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 p-6 md:p-10">
+
+        <div id="spacer" className="h-4"></div>
+        
+        <section className="mb-10 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 p-6 md:p-10">
           <p className="mb-3 text-sm font-semibold uppercase text-blue-400">
             Eventos de MMA
           </p>
 
-          <h1 className="max-w-3xl text-4xl font-black tracking-tight md:text-6xl">
+          <h1 className="max-w-3xl text-4xl font-black tracking-tight leading-tight md:text-6xl">
             Encuentra los próximos eventos de MMA profesional.
           </h1>
 
-          <p className="mt-4 max-w-2xl text-slate-400">
+          <p className="mt-4 max-w-2xl text-slate-400 pt-2">
             Consulta veladas, promotoras, peleas y contenido premium desde una
             única plataforma.
           </p>
         </section>
+
+        <div id="spacer" className="h-2"></div>
 
         <EventFilters
           search={search}
@@ -89,6 +94,8 @@ function HomePage() {
           location={location}
           setLocation={setLocation}
         />
+        
+        <div id="spacer" className="h-2"></div>
 
         {loading && (
           <div className="rounded-xl border border-slate-800 bg-slate-900 p-8 text-center text-slate-400">
