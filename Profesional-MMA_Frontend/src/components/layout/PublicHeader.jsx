@@ -12,7 +12,7 @@ function PublicHeader() {
 
   return (
     
-    <header className="grid grid-cols-[5%_90%_5%] border-b border-slate-800 bg-slate-900">
+    <header id="publicHeader" className="grid grid-cols-[5%_90%_5%] border-b border-slate-800 bg-slate-900">
       <div id="leftSpacer" />
       <div className="flex h-16 items-center justify-between pl-8 pr-8">
         
