@@ -1,0 +1,75 @@
+@import "tailwindcss";
+
+:root {
+  --color-primary: hsl(21, 100%, 65%);
+  --color-secondary: hsl(240, 70%, 60%);
+  --color-date:hsl(180, 60%, 60%)
+}
+*,*::before,*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* position: relative; */
+}
+p{
+  text-align: left;
+  text-wrap:pretty;
+  line-height: 1;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+:root {
+  --text: var(--color-zinc-700);
+  --text-h: var(--color-zinc-900);
+  --bg: var(--color-zinc-50);
+  --border: var(--color-zinc-200);
+  --code-bg: var(--color-zinc-100);
+  --accent-bg: var(--color-zinc-200);
+
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+
+  font-family: var(--sans);
+  color-scheme: light dark;
+  color: var(--text);
+  background: var(--bg);
+
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text: var(--color-zinc-100);
+    --text-h: var(--color-zinc-50);
+    --bg: var(--color-zinc-900);
+    --border: var(--color-zinc-700);
+    --code-bg: var(--color-zinc-700);
+    --accent-bg: var(--color-zinc-800);
+    --shadow:
+      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  }
+}
+
+body {
+  display: block;
+  
+}
+
+#root {
+  max-width: 100%;
+  /* padding-left: 16px;
+  padding-right: 16px; */
+}
+
+input {
+  border: 1px solid var(--border);
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+button{
+  border: 1px solid var(--border);
+  margin-top: 6px;
+  margin-bottom: 6px;
+  background: var(--color-secondary)
+}

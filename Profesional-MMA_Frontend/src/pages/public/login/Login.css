@@ -1,0 +1,8 @@
+h2{
+  text-decoration: underline;
+}
+form{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
