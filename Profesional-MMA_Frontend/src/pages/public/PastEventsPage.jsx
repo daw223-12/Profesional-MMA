@@ -53,14 +53,8 @@ function PastEventsPage() {
       className="min-h-screen flex justify-center pt-10"
     >
       <div id="profilePageContent" className="mt-8 w-full max-w-7xl space-y-10">
-<<<<<<< HEAD
         <div id="spacer" className="h-4"></div>
 
-=======
-
-        <div id="spacer" className="h-4"></div>
-        
->>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
         <section className="mb-8 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-950 p-6 md:p-10">
           <p className="mb-3 text-sm font-semibold uppercase text-blue-400">
             Área premium

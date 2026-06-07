@@ -2,10 +2,6 @@ import { Link } from "react-router-dom";
 import {
   Home,
   CalendarDays,
-<<<<<<< HEAD
-=======
-  // Swords,
->>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
   Dumbbell,
   Building2,
   Users,
@@ -44,15 +40,12 @@ const ADMIN_NAV_ITEMS = [
     path: "/admin/gyms",
     icon: Building2,
     roles: ["super_admin", "promoter_admin"],
-<<<<<<< HEAD
   },
   {
     label: "Promotoras",
     path: "/admin/promotions",
     icon: Trophy,
     roles: ["super_admin"],
-=======
->>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
   },
   {
     label: "Usuarios",

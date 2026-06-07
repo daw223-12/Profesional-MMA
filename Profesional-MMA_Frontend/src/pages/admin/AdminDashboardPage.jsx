@@ -2,10 +2,6 @@ import {
   CalendarDays,
   Dumbbell,
   Shield,
-<<<<<<< HEAD
-=======
-  // Swords,
->>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
   Users,
   Building2,
   Trophy,
@@ -41,7 +37,6 @@ const ADMIN_CARDS = [
     path: "/admin/gyms",
     icon: Building2,
     roles: ["super_admin", "promoter_admin"],
-<<<<<<< HEAD
   },
   {
     title: "Promotoras",
@@ -49,8 +44,6 @@ const ADMIN_CARDS = [
     path: "/admin/promotions",
     icon: Trophy,
     roles: ["super_admin"],
-=======
->>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
   },
   {
     title: "Usuarios",
