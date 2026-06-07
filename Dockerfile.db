@@ -1,0 +1,3 @@
+FROM mysql:8.0.32
+
+COPY ./db/mma_events.sql /docker-entrypoint-initdb.d/01-mma_events.sql
