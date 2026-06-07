@@ -2,9 +2,13 @@ import {
   CalendarDays,
   Dumbbell,
   Shield,
+<<<<<<< HEAD
+=======
   // Swords,
+>>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
   Users,
   Building2,
+  Trophy,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
@@ -37,6 +41,16 @@ const ADMIN_CARDS = [
     path: "/admin/gyms",
     icon: Building2,
     roles: ["super_admin", "promoter_admin"],
+<<<<<<< HEAD
+  },
+  {
+    title: "Promotoras",
+    description: "Gestionar promotoras registradas.",
+    path: "/admin/promotions",
+    icon: Trophy,
+    roles: ["super_admin"],
+=======
+>>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
   },
   {
     title: "Usuarios",
@@ -45,6 +59,7 @@ const ADMIN_CARDS = [
     icon: Users,
     roles: ["super_admin"],
   },
+  
   {
     title: "Reglas",
     description: "Consultar y crear reglas de combate.",

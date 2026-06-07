@@ -98,9 +98,16 @@ function FightersPage() {
             {fighters.map((fighter) => (
               <article
                 key={fighter.id}
+<<<<<<< HEAD
+                // className="flex flex-col justify-center rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:border-blue-500"
+                className="py flex flex-col items-center rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:border-blue-500"
+              >
+                <div className="mt-4 mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400">
+=======
                 className="rounded-2xl border border-slate-800 bg-slate-900 p-5 transition hover:border-blue-500"
               >
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600/20 text-blue-400">
+>>>>>>> 374194b824ad75f3d6f2dc5e1e7c9ed349e21efb
                   <Dumbbell size={24} />
                 </div>
 

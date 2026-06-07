@@ -9,6 +9,7 @@ function EventCard({ event, isFavorite = false }) {
           src={event.image_url || "/placeholder-event.jpg"}
           alt={event.name}
           onError={(e) => {
+            e.currentTarget.onerror = null;
             e.currentTarget.src = "/placeholder-event.jpg";
           }}
           className="h-full w-full object-cover"
