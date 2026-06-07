@@ -47,22 +47,25 @@ function AdminFighterFormPage() {
       setError("");
 
       try {
-        const gymsResponse = await getAdminGyms();
+        if (isGymAdmin) {
+          if (!ignore && user?.gym_id) {
+            setGyms([
+              {
+                id: user.gym_id,
+                name: user.gym?.name || `Gimnasio #${user.gym_id}`,
+              },
+            ]);
 
-        if (!ignore) {
-          const allGyms = gymsResponse.data.data || [];
-
-          const visibleGyms = isGymAdmin
-            ? allGyms.filter((gym) => Number(gym.id) === Number(user?.gym_id))
-            : allGyms;
-
-          setGyms(visibleGyms);
-
-          if (isGymAdmin && user?.gym_id) {
             setGymRelation((current) => ({
               ...current,
               gym_id: String(user.gym_id),
             }));
+          }
+        } else {
+          const gymsResponse = await getAdminGyms();
+
+          if (!ignore) {
+            setGyms(gymsResponse.data.data || []);
           }
         }
 
@@ -109,7 +112,7 @@ function AdminFighterFormPage() {
     return () => {
       ignore = true;
     };
-  }, [id, isEditing, isGymAdmin, user?.gym_id]);
+  }, [id, isEditing, isGymAdmin, user?.gym_id, user?.gym?.name]);
 
   function handleChange(event) {
     setForm({
@@ -131,6 +134,18 @@ function AdminFighterFormPage() {
     setError("");
 
     try {
+      if (!gymRelation.gym_id) {
+        setError("Debes seleccionar un gimnasio.");
+        setSaving(false);
+        return;
+      }
+
+      if (!gymRelation.start_date) {
+        setError("La fecha de inicio del gimnasio es obligatoria.");
+        setSaving(false);
+        return;
+      }
+
       const payload = {
         name: form.name,
         nickname: form.nickname || null,
@@ -142,6 +157,11 @@ function AdminFighterFormPage() {
         photo_url: form.photo_url || null,
       };
 
+      if (isGymAdmin) {
+        payload.start_date = gymRelation.start_date;
+        payload.end_date = gymRelation.end_date || null;
+      }
+
       let savedFighter;
 
       if (isEditing) {
@@ -152,7 +172,7 @@ function AdminFighterFormPage() {
         savedFighter = response.data;
       }
 
-      if (!isGymAdmin && gymRelation.gym_id && gymRelation.start_date) {
+      if (!isGymAdmin) {
         await attachGymToFighter(savedFighter.id, {
           gym_id: Number(gymRelation.gym_id),
           start_date: gymRelation.start_date,
@@ -326,8 +346,8 @@ function AdminFighterFormPage() {
 
             {isGymAdmin && (
               <p className="mt-1 text-sm text-slate-400">
-                Como administrador de gimnasio, solo puedes usar tu propio
-                gimnasio.
+                Como administrador de gimnasio, se usará automáticamente tu
+                gimnasio asociado, pero puedes indicar las fechas de relación.
               </p>
             )}
           </div>
@@ -343,6 +363,7 @@ function AdminFighterFormPage() {
                 value={gymRelation.gym_id}
                 onChange={handleGymRelationChange}
                 disabled={isGymAdmin}
+                required
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500 disabled:opacity-60"
               >
                 <option value="">Seleccionar gimnasio</option>
@@ -365,7 +386,7 @@ function AdminFighterFormPage() {
                 name="start_date"
                 value={gymRelation.start_date}
                 onChange={handleGymRelationChange}
-                required={!isGymAdmin && Boolean(gymRelation.gym_id)}
+                required
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
               />
             </div>
@@ -380,6 +401,7 @@ function AdminFighterFormPage() {
                 name="end_date"
                 value={gymRelation.end_date}
                 onChange={handleGymRelationChange}
+                min={gymRelation.start_date || undefined}
                 className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
               />
             </div>
@@ -387,9 +409,8 @@ function AdminFighterFormPage() {
 
           {isGymAdmin && (
             <div className="rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm text-yellow-300">
-              Nota: el backend actual asigna automáticamente el gimnasio del
-              gym_admin al crear el peleador. Si necesitas guardar fechas
-              personalizadas para gym_admin, consulta al equipo técnico.
+              El gimnasio se asignará automáticamente al peleador según tu
+              usuario de administrador de gimnasio.
             </div>
           )}
         </section>

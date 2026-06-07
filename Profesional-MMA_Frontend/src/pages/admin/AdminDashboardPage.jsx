@@ -36,7 +36,7 @@ const ADMIN_CARDS = [
     description: "Consultar gimnasios registrados.",
     path: "/admin/gyms",
     icon: Building2,
-    roles: ["super_admin", "promoter_admin", "gym_admin"],
+    roles: ["super_admin", "promoter_admin"],
   },
   {
     title: "Usuarios",
