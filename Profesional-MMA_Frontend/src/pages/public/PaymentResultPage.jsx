@@ -7,8 +7,7 @@ function PaymentResultPage() {
   const location = useLocation();
   const { refreshUser } = useAuth();
 
-  // const [checkingPremium, setCheckingPremium] = useState(false);
-  const [setCheckingPremium] = useState(false);
+  const [checkingPremium, setCheckingPremium] = useState(false);
 
   const isSuccess = location.pathname.includes("success");
 
@@ -25,7 +24,7 @@ function PaymentResultPage() {
 
         const updatedUser = await refreshUser();
 
-        if (updatedUser?.is_premium) {
+        if (updatedUser?.is_premium === true) {
           break;
         }
 
@@ -69,11 +68,11 @@ function PaymentResultPage() {
               : "El proceso de pago ha sido cancelado. No se ha realizado ningún cargo."}
           </p>
 
-          {/* {checkingPremium && (
+          {checkingPremium && (
             <p className="mt-4 text-sm text-blue-400">
               Actualizando estado Premium...
             </p>
-          )} */}
+          )}
 
           <Link
             to="/"
