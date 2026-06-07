@@ -389,8 +389,7 @@ function AdminFighterFormPage() {
             <div className="rounded-xl border border-yellow-500/40 bg-yellow-500/10 p-4 text-sm text-yellow-300">
               Nota: el backend actual asigna automáticamente el gimnasio del
               gym_admin al crear el peleador. Si necesitas guardar fechas
-              personalizadas para gym_admin, habría que permitirlo también en
-              Laravel.
+              personalizadas para gym_admin, consulta al equipo técnico.
             </div>
           )}
         </section>

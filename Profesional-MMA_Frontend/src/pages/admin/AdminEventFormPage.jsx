@@ -12,6 +12,7 @@ import {
   updateAdminEvent,
 } from "../../api/adminEvents.api";
 import { getAdminPromotions } from "../../api/adminPromotions.api";
+import { useAuth } from "../../hooks/useAuth";
 
 function AdminEventFormPage() {
   const { id } = useParams();
@@ -27,6 +28,9 @@ function AdminEventFormPage() {
   const [loadingFights, setLoadingFights] = useState(false);
 
 
+  const { user } = useAuth();
+  const isPromoterAdmin = user?.role === "promoter_admin";
+
   const [form, setForm] = useState({
     name: "",
     date: "",
@@ -35,7 +39,7 @@ function AdminEventFormPage() {
     capacity: "",
     status: "draft",
     image_url: "",
-    promotion_id: "",
+    promotion_id: isPromoterAdmin ? String(user?.promotion_id || "") : "",
   });
 
   useEffect(() => {
@@ -47,6 +51,18 @@ function AdminEventFormPage() {
 
       try {
         const promotionsResponse = await getAdminPromotions();
+
+        const availablePromotions = promotionsResponse.data.data || [];
+
+
+        setPromotions(
+          isPromoterAdmin
+            ? availablePromotions.filter(
+              (promotion) => Number(promotion.id) === Number(user?.promotion_id)
+            )
+            : availablePromotions
+        );
+
 
         if (!ignore) {
           setPromotions(promotionsResponse.data.data || []);
@@ -263,9 +279,10 @@ function AdminEventFormPage() {
           <label className="mb-1 block text-sm text-slate-300">Promotora</label>
           <select
             name="promotion_id"
-            value={form.promotion_id}
+            value={isPromoterAdmin ? String(user?.promotion_id || "") : form.promotion_id}
             onChange={handleChange}
-            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500"
+            disabled={isPromoterAdmin}
+            className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 outline-none focus:border-blue-500 disabled:opacity-60"
             required
           >
             <option value="">Selecciona una promotora</option>
