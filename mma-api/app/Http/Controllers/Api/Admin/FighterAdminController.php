@@ -33,7 +33,7 @@ class FighterAdminController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
+        $fighterData = $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'nickname' => ['nullable', 'string', 'max:255'],
             'wins' => ['nullable', 'integer', 'min:0'],
@@ -42,14 +42,32 @@ class FighterAdminController extends Controller
             'height' => ['nullable', 'numeric', 'min:0'],
             'reach' => ['nullable', 'numeric', 'min:0'],
             'photo_url' => ['nullable', 'string', 'max:255'],
+
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+            'image_url' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $fighter = Fighter::create($data);
+        $relationData = [];
 
         if ($request->user()->role === 'gym_admin') {
-            $fighter->gyms()->attach($request->user()->gym_id, [
-                'start_date' => now()->toDateString(),
+            $relationData = $request->validate([
+                'start_date' => ['required', 'date'],
+                'end_date' => ['nullable', 'date', 'after_or_equal:start_date'],
+                'image_url' => ['nullable', 'string', 'max:255'],
             ]);
+        }
+
+        unset(
+            $fighterData['start_date'],
+            $fighterData['end_date'],
+            $fighterData['image_url']
+        );
+
+        $fighter = Fighter::create($fighterData);
+
+        if ($request->user()->role === 'gym_admin') {
+            $fighter->gyms()->attach($request->user()->gym_id, $relationData);
         }
 
         return response()->json($fighter->load('gyms'), 201);
