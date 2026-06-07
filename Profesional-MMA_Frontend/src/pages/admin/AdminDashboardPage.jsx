@@ -2,7 +2,7 @@ import {
   CalendarDays,
   Dumbbell,
   Shield,
-  Swords,
+  // Swords,
   Users,
   Building2,
 } from "lucide-react";
@@ -17,13 +17,13 @@ const ADMIN_CARDS = [
     icon: CalendarDays,
     roles: ["super_admin", "promoter_admin"],
   },
-  {
-    title: "Peleas",
-    description: "Gestionar la cartelera y sus peleadores.",
-    path: "/admin/fights",
-    icon: Swords,
-    roles: ["super_admin", "promoter_admin"],
-  },
+  // {
+  //   title: "Peleas",
+  //   description: "Gestionar la cartelera y sus peleadores.",
+  //   path: "/admin/fights",
+  //   icon: Swords,
+  //   roles: ["super_admin", "promoter_admin"],
+  // },
   {
     title: "Peleadores",
     description: "Crear y actualizar perfiles de peleadores.",

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import {
   Home,
   CalendarDays,
-  Swords,
+  // Swords,
   Dumbbell,
   Building2,
   Users,
@@ -22,12 +22,12 @@ const ADMIN_NAV_ITEMS = [
     icon: CalendarDays,
     roles: ["super_admin", "promoter_admin"],
   },
-  {
-    label: "Peleas",
-    path: "/admin/fights",
-    icon: Swords,
-    roles: ["super_admin", "promoter_admin"],
-  },
+  // {
+  //   label: "Peleas",
+  //   path: "/admin/fights",
+  //   icon: Swords,
+  //   roles: ["super_admin", "promoter_admin"],
+  // },
   {
     label: "Peleadores",
     path: "/admin/fighters",
