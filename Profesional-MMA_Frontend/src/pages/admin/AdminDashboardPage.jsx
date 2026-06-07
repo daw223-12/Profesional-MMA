@@ -50,7 +50,7 @@ const ADMIN_CARDS = [
     description: "Consultar y crear reglas de combate.",
     path: "/admin/rules",
     icon: Shield,
-    roles: ["super_admin", "promoter_admin"],
+    roles: ["super_admin"],
   },
 ];
 
