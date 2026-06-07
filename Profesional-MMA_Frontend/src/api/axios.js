@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://70.156.160.30/:443/api",
+  baseURL: "https://professionalmma.ddns.net/api",
   headers: {
     Accept: "application/json",
   },
